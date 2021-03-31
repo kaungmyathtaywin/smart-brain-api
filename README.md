@@ -1,3 +1,3 @@
-# smart-brain backend application
+# smart-brain server side 
 
-This is server side code built with express for smart-brain application.
+This is smart brain backend code built with express.
