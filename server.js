@@ -1,7 +1,19 @@
 import express from "express";
 import cors from "cors";
+import knex from "knex";
 
 const app = express();
+
+// Database
+const db = knex({
+  client: "pg",
+  connection: {
+    host: "127.0.0.1",
+    user: "kaungmyathtaywin",
+    password: "",
+    database: "smart-brain",
+  },
+});
 
 app.use(cors());
 app.use(express.json());
@@ -45,29 +57,38 @@ app.post("/signin", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { name, email } = req.body;
-  database.users.push({
-    id: "125",
-    name: name,
-    email: email,
-    entries: 0,
-    joined: new Date(),
-  });
-  res.json(database.users[database.users.length - 1]);
+
+  db("users")
+    .returning("*")
+    .insert({
+      name: name,
+      email: email,
+      joined: new Date(),
+    })
+    .then((user) => {
+      res.json(user[0]);
+    })
+    .catch((error) => {
+      res.status(400).json("Coult not register");
+    });
 });
 
 app.get("/profile/:id", (req, res) => {
   const { id } = req.params;
-  let found = false;
-  database.users.forEach((user) => {
-    if (user.id === id) {
-      found = true;
-      return res.json(user);
-    }
-  });
 
-  if (!found) {
-    res.status(400).send("No such user");
-  }
+  db.select("*")
+    .from("users")
+    .where({ id: id })
+    .then((user) => {
+      if (user.length) {
+        res.json(user[0]);
+      } else {
+        res.status(400).json("No such user");
+      }
+    })
+    .catch((error) => {
+      res.status(400).json("Error getting user");
+    });
 });
 
 app.put("/image", (req, res) => {
