@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import knex from "knex";
 import bcrypt from "bcrypt";
+import handleRegister from "./controllers/register.js";
 
 const app = express();
 
@@ -51,34 +52,7 @@ app.post("/signin", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const { name, email, password } = req.body;
-  const saltRounds = 10;
-  const hash = bcrypt.hashSync(password, saltRounds);
-
-  db.transaction((trx) => {
-    trx("login")
-      .insert({
-        hash: hash,
-        email: email,
-      })
-      .returning("email")
-      .then((loginEmail) => {
-        return db("users")
-          .insert({
-            name: name,
-            email: loginEmail[0],
-            joined: new Date(),
-          })
-          .returning("*")
-          .then((user) => {
-            res.json(user[0]);
-          });
-      })
-      .then(trx.commit)
-      .catch(trx.rollback);
-  }).catch((error) => {
-    res.status(400).json("Could not register");
-  });
+  handleRegister(req, res, db, bcrypt);
 });
 
 app.get("/profile/:id", (req, res) => {
