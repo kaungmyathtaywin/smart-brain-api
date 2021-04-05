@@ -4,6 +4,8 @@ import knex from "knex";
 import bcrypt from "bcrypt";
 import handleRegister from "./controllers/register.js";
 import handleSignin from "./controllers/signin.js";
+import handleProfile from "./controllers/profile.js";
+import handleImage from "./controllers/image.js";
 
 const app = express();
 
@@ -34,35 +36,11 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/profile/:id", (req, res) => {
-  const { id } = req.params;
-
-  db.select("*")
-    .from("users")
-    .where({ id: id })
-    .then((user) => {
-      if (user.length) {
-        res.json(user[0]);
-      } else {
-        res.status(400).json("No such user");
-      }
-    })
-    .catch((error) => {
-      res.status(400).json("Error getting user");
-    });
+  handleProfile(req, res, db);
 });
 
 app.put("/image", (req, res) => {
-  const { id } = req.body;
-  db("users")
-    .where({ id: id })
-    .increment("entries", 1)
-    .returning("entries")
-    .then((entries) => {
-      res.json(entries[0]);
-    })
-    .catch((error) => {
-      res.status(400).json("Unable to get entries");
-    });
+  handleImage(req, res, db);
 });
 
 app.listen(3000, () => {

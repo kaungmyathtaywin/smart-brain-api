@@ -1,5 +1,6 @@
 export default function handleSignin(req, res, db, bcrypt) {
   const { email, password } = req.body;
+
   db.select("email", "hash")
     .from("login")
     .where({ email: email })
