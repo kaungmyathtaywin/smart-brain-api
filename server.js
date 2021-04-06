@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import handleRegister from "./controllers/register.js";
 import handleSignin from "./controllers/signin.js";
 import handleProfile from "./controllers/profile.js";
-import handleImage from "./controllers/image.js";
+import { handleImage, handleApiCall } from "./controllers/image.js";
 
 const app = express();
 
@@ -37,6 +37,10 @@ app.post("/register", (req, res) => {
 
 app.get("/profile/:id", (req, res) => {
   handleProfile(req, res, db);
+});
+
+app.post("/imageurl", (req, res) => {
+  handleApiCall(req, res);
 });
 
 app.put("/image", (req, res) => {

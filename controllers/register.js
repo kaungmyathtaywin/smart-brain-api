@@ -1,5 +1,10 @@
 export default function handleRegister(req, res, db, bcrypt) {
   const { name, email, password } = req.body;
+
+  if (!email || !password || !name) {
+    return res.status(400).json("Incorrect form submission");
+  }
+
   const saltRounds = 10;
   const hash = bcrypt.hashSync(password, saltRounds);
 
