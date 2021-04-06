@@ -7,18 +7,18 @@ import handleSignin from "./controllers/signin.js";
 import handleProfile from "./controllers/profile.js";
 import { handleImage, handleApiCall } from "./controllers/image.js";
 
-const app = express();
-
 // Database
 const db = knex({
   client: "pg",
   connection: {
-    connectString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: false,
     },
   },
 });
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
